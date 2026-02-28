@@ -1,0 +1,48 @@
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+.venv/
+venv/
+env/
+
+# ── Android ──
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+local.properties
+.gradle/
+app/build/
+
+# ── IDE ──
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+*.sln.docstates
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── Build artifacts ──
+*.exe
+*.msi
+*.spec
+
+# ── Logs ──
+*.log
+
+# ── Signing ──
+*.jks
+*.keystore

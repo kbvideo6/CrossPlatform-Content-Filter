@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Omega Lite</string>
+    <string name="device_admin_label">Omega Lite Device Admin</string>
+    <string name="device_admin_description">Manages protection policies: DNS filtering, app visibility control, and watchdog enforcement.</string>
+    <string name="status_active">Protection Active</string>
+    <string name="status_inactive">Protection Inactive</string>
+    <string name="dns_locked">DNS Locked</string>
+    <string name="dns_unlocked">DNS Unlocked</string>
+</resources>
