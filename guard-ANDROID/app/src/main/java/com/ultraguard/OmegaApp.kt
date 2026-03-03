@@ -3,6 +3,7 @@ package com.ultraguard
 import android.app.Application
 import android.util.Log
 import com.ultraguard.dns.DnsMonitorService
+import com.ultraguard.violation.NotificationHelper
 import com.ultraguard.watchdog.WatchdogScheduler
 
 /**
@@ -17,6 +18,9 @@ class OmegaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Create notification channels early
+        NotificationHelper.createChannels(this)
 
         // Schedule periodic watchdog (15-min safety net)
         WatchdogScheduler.schedulePeriodicCheck(this)
