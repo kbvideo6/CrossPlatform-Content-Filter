@@ -3,134 +3,304 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/background_primary"
+    android:scrollbarThumbVertical="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="32dp">
 
-        <!-- HEADER -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OMEGA LITE"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#1565C0"
-            android:letterSpacing="0.15" />
-
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DNS-level content blocker"
-            android:textSize="13sp"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#888888" />
-
-        <!-- PROTECTION STATUS CARD -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- ═══════════════════════════════════════════════
+             HEADER — Logo + Brand
+             ═══════════════════════════════════════════════ -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="#FFFFFF">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_logo"
+                android:contentDescription="Omega Lite Logo" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OMEGA LITE"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:letterSpacing="0.15" />
+
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DNS-level content blocker"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_tertiary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════════════════
+             CARD 1: CORE DEFENSE STATUS
+             Large shield + primary health indicator
+             ═══════════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDefense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
+                <!-- Section label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Protection Status"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
+                    android:text="CORE DEFENSE"
+                    style="@style/CardHeader" />
 
+                <!-- Shield + Status row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp">
+
+                    <!-- Glowing shield -->
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:layout_gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/ivShieldGlow"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:src="@drawable/shield_glow_active" />
+
+                        <ImageView
+                            android:id="@+id/ivShield"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_shield" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:id="@+id/tvProtectionTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Protection Active"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/emerald_green" />
+
+                        <TextView
+                            android:id="@+id/tvDeviceOwner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Device Owner Authority: Secured"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="#EEEEEE" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/divider" />
 
-                <TextView
-                    android:id="@+id/tvDeviceOwner"
+                <!-- Data points -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Device Owner: checking..."
-                    android:textSize="14sp"
-                    android:fontFamily="monospace" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
 
-                <TextView
-                    android:id="@+id/tvDnsStatus"
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_dns"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvDnsStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DNS Lock: loading..."
+                        android:textSize="13sp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_mono" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="DNS Lock: checking..."
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="monospace" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
 
-                <TextView
-                    android:id="@+id/tvBlockedDomains"
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_visibility_off"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvBypassPrevention"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bypass Prevention: Active"
+                        android:textSize="13sp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_mono" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Block list: loading..."
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="monospace" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tvWatchdog"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Watchdog: loading..."
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="monospace" />
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_block"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvBlockedDomains"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Block list: loading..."
+                        android:textSize="13sp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_mono" />
+                </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- STATS CARD -->
+        <!-- ═══════════════════════════════════════════════════
+             CARD 2: LOCAL ANALYTICS & STREAK
+             Clean streak + blocked counters
+             ═══════════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAnalytics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="#FFFFFF">
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
+                <!-- Section label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Analytics"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
+                    android:text="ANALYTICS &amp; STREAK"
+                    style="@style/CardHeader" />
 
+                <!-- Large clean streak display -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/tvStreakCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/emerald_green" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clean Days"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:id="@+id/tvStreakMessage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Keep going strong"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_tertiary" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="#EEEEEE" />
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/divider" />
 
+                <!-- Stats row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -149,41 +319,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            android:textColor="#E53935" />
+                            style="@style/StatNumber"
+                            android:textColor="@color/soft_red" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Blocked Today"
-                            android:textSize="11sp"
-                            android:textColor="#888888" />
+                            android:text="BLOCKED TODAY"
+                            style="@style/StatLabel" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/tvStreakCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            android:textColor="#43A047" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Clean Days"
-                            android:textSize="11sp"
-                            android:textColor="#888888" />
-                    </LinearLayout>
+                    <!-- Vertical divider -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/divider" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -197,105 +347,365 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            android:textColor="#FB8C00" />
+                            style="@style/StatNumber"
+                            android:textColor="@color/amber_warning" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total All-Time"
-                            android:textSize="11sp"
-                            android:textColor="#888888" />
+                            android:text="ALL-TIME"
+                            style="@style/StatLabel" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <!-- Tap hint -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tap to view detailed block history →"
+                    android:textSize="11sp"
+                    android:textColor="@color/brand_blue"
+                    android:layout_marginTop="12dp"
+                    android:gravity="end" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- SYSTEM INFO CARD -->
+        <!-- ═══════════════════════════════════════════════════
+             CARD 3: VIOLATION ENFORCEMENT STATE
+             4-stage escalation + current threat level
+             ═══════════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardViolation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="#FFFFFF">
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
+                <!-- Section label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="System Info"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
+                    android:text="ENFORCEMENT STATE"
+                    style="@style/CardHeader" />
 
+                <!-- Status title -->
+                <TextView
+                    android:id="@+id/tvViolationStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Status: Normal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/emerald_green"
+                    android:layout_marginTop="12dp" />
+
+                <!-- 4-stage progress bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp">
+
+                    <!-- Level 0: Normal -->
+                    <View
+                        android:id="@+id/viewLevel0"
+                        android:layout_width="0dp"
+                        android:layout_height="6dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="3dp"
+                        android:background="@color/level_normal" />
+
+                    <!-- Level 1: Warning -->
+                    <View
+                        android:id="@+id/viewLevel1"
+                        android:layout_width="0dp"
+                        android:layout_height="6dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="3dp"
+                        android:background="@color/level_inactive" />
+
+                    <!-- Level 2: App Block -->
+                    <View
+                        android:id="@+id/viewLevel2"
+                        android:layout_width="0dp"
+                        android:layout_height="6dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="3dp"
+                        android:background="@color/level_inactive" />
+
+                    <!-- Level 3: Device Lock -->
+                    <View
+                        android:id="@+id/viewLevel3"
+                        android:layout_width="0dp"
+                        android:layout_height="6dp"
+                        android:layout_weight="1"
+                        android:background="@color/level_inactive" />
+                </LinearLayout>
+
+                <!-- Level labels -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Normal"
+                        android:textSize="10sp"
+                        android:textColor="@color/text_tertiary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Warning"
+                        android:textSize="10sp"
+                        android:textColor="@color/text_tertiary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="App Block"
+                        android:textSize="10sp"
+                        android:textColor="@color/text_tertiary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Lock"
+                        android:textSize="10sp"
+                        android:textColor="@color/text_tertiary" />
+                </LinearLayout>
+
+                <!-- Reset counter -->
+                <TextView
+                    android:id="@+id/tvResetCounter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Violations: 0  |  Counter resets in: --"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/text_tertiary"
+                    android:layout_marginTop="12dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════════
+             CARD 4: SYSTEM WATCHDOG & NETWORK TRAFFIC
+             Watchdog health + DNS server info + traffic summary
+             ═══════════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardWatchdog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Section label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM WATCHDOG"
+                    style="@style/CardHeader" />
+
+                <!-- Watchdog status -->
+                <TextView
+                    android:id="@+id/tvWatchdog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/text_mono"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginTop="12dp" />
+
+                <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="#EEEEEE" />
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/divider" />
+
+                <!-- Network traffic header -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NETWORK TRAFFIC"
+                    style="@style/CardHeader" />
+
+                <TextView
+                    android:id="@+id/tvNetworkTraffic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gathering traffic data..."
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/text_mono"
+                    android:lineSpacingExtra="3dp"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/divider" />
+
+                <!-- System info -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM INFO"
+                    style="@style/CardHeader" />
 
                 <TextView
                     android:id="@+id/tvSysInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Loading..."
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:fontFamily="monospace"
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="#555555" />
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="@color/text_tertiary"
+                    android:layout_marginTop="8dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- BLOCK HISTORY CARD -->
+        <!-- ═══════════════════════════════════════════════════
+             CARD 5: CUSTOM DOMAIN BLOCK (21-day lock)
+             Add domains + view blocked list with countdown
+             ═══════════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDomainBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="24dp"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="#FFFFFF">
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CUSTOM BLOCKED DOMAINS"
+                        style="@style/CardHeader" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddDomain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="+ ADD"
+                        android:textSize="11sp"
+                        android:textColor="@color/text_primary"
+                        app:backgroundTint="@color/emerald_green_dim"
+                        app:cornerRadius="18dp"
+                        android:paddingHorizontal="16dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDomainBlockInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Blocked domains require a 21-day wait to unlock"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_tertiary"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tvBlockedDomainList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No custom blocks yet"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/text_mono"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginTop="12dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════════════════════════════════════════════
+             CARD 6: RECENT BLOCK HISTORY (compact)
+             ═══════════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/background_card"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Recent Block History"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="#EEEEEE" />
+                    android:text="RECENT BLOCK HISTORY"
+                    style="@style/CardHeader" />
 
                 <TextView
                     android:id="@+id/tvHistory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="No blocked requests yet."
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:fontFamily="monospace"
                     android:lineSpacingExtra="3dp"
-                    android:textColor="#555555" />
+                    android:textColor="@color/text_mono"
+                    android:layout_marginTop="8dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
