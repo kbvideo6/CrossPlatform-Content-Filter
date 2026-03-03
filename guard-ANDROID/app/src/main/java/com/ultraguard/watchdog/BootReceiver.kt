@@ -7,10 +7,12 @@ import android.app.admin.DevicePolicyManager
 import android.util.Log
 import com.ultraguard.admin.AdminReceiver
 import com.ultraguard.admin.PolicyManager
+import com.ultraguard.dns.DnsMonitorService
 
 /**
  * Receives BOOT_COMPLETED broadcast and re-applies all policies.
  * Ensures protection survives device reboot.
+ * Also starts the DNS monitor service for instant tamper detection.
  */
 class BootReceiver : BroadcastReceiver() {
 
@@ -27,6 +29,13 @@ class BootReceiver : BroadcastReceiver() {
 
             if (dpm.isDeviceOwnerApp(context.packageName)) {
                 PolicyManager.enforceAllPolicies(context, dpm, admin)
+            }
+
+            // Start DNS monitor service (instant detection via ContentObserver)
+            try {
+                DnsMonitorService.start(context)
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not start DNS monitor service on boot: ${e.message}")
             }
         }
     }

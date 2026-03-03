@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ═══ Base Dark Theme ═══ -->
+    <color name="background_primary">#FF0F1923</color>      <!-- Midnight blue-charcoal -->
+    <color name="background_card">#FF1A2634</color>          <!-- Slightly lighter card bg -->
+    <color name="background_card_elevated">#FF223344</color> <!-- Elevated surfaces -->
+
+    <!-- ═══ Accent Colors ═══ -->
+    <color name="emerald_green">#FF2ECC71</color>            <!-- Active/healthy states -->
+    <color name="emerald_green_dim">#FF1A8B4D</color>        <!-- Dimmed green accent -->
+    <color name="amber_warning">#FFFFC107</color>            <!-- Warning states -->
+    <color name="amber_dim">#FFB8860B</color>                <!-- Dimmed amber -->
+    <color name="soft_red">#FFEF5350</color>                 <!-- Critical/blocked states -->
+    <color name="soft_red_dim">#FFB71C1C</color>             <!-- Dimmed red -->
+
+    <!-- ═══ Shield Glow Colors ═══ -->
+    <color name="shield_active_glow">#4D2ECC71</color>       <!-- 30% green glow -->
+    <color name="shield_inactive_glow">#4DEF5350</color>     <!-- 30% red glow -->
+
+    <!-- ═══ Text Colors ═══ -->
+    <color name="text_primary">#FFF5F5F5</color>             <!-- Primary white text -->
+    <color name="text_secondary">#FFB0BEC5</color>           <!-- Secondary grey text -->
+    <color name="text_tertiary">#FF607D8B</color>            <!-- Tertiary muted text -->
+    <color name="text_mono">#FF80CBC4</color>                <!-- Monospace data - teal -->
+
+    <!-- ═══ Dividers & Borders ═══ -->
+    <color name="divider">#FF2C3E50</color>
+    <color name="card_stroke">#FF2C3E50</color>
+
+    <!-- ═══ Escalation Level Colors ═══ -->
+    <color name="level_normal">#FF2ECC71</color>
+    <color name="level_warning">#FFFFC107</color>
+    <color name="level_app_block">#FFFF9800</color>
+    <color name="level_locked">#FFEF5350</color>
+    <color name="level_inactive">#FF37474F</color>
+
+    <!-- ═══ Progress Bar ═══ -->
+    <color name="progress_bg">#FF263238</color>
+    <color name="progress_streak">#FF2ECC71</color>
+
+    <!-- ═══ Brand ═══ -->
+    <color name="brand_blue">#FF679ED6</color>
+    <color name="brand_deep_blue">#FF0A1D44</color>
+</resources>

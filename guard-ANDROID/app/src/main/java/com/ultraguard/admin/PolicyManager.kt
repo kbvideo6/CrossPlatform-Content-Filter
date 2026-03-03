@@ -4,8 +4,10 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.os.UserManager
+import android.provider.Settings
 import android.util.Log
 import com.ultraguard.dns.DnsEnforcer
+import com.ultraguard.dns.DnsMonitorService
 import com.ultraguard.watchdog.WatchdogScheduler
 
 /**
@@ -31,16 +33,26 @@ object PolicyManager {
         Log.i(TAG, "═══ Enforcing all Omega Lite policies ═══")
 
         // ── Layer 1: System Private DNS (PRIMARY DEFENSE) ──
-        // Locks DNS to Cloudflare Family which blocks adult content.
-        // Works system-wide, even through other VPNs.
-        // User cannot change this setting.
-        DnsEnforcer.enforcePrivateDns(dpm, admin)
+        // Locks DNS to family-safe DNS with automatic fallback.
+        DnsEnforcer.enforcePrivateDns(context, dpm, admin)
 
         // ── Layer 2: User restrictions (prevent bypass) ──
         enforceUserRestrictions(dpm, admin)
 
-        // ── Layer 6: Schedule watchdog ──
+        // ── Layer 3: Disable developer options ──
+        // ADB setup turns on developer options; some apps (banking, etc.)
+        // refuse to run while it's enabled. This turns it off.
+        disableDeveloperOptions(dpm, admin)
+
+        // ── Layer 6: Schedule watchdog (15-min safety net) ──
         WatchdogScheduler.schedulePeriodicCheck(context)
+
+        // ── Layer 7: Start DNS monitor service (instant detection) ──
+        try {
+            DnsMonitorService.start(context)
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not start DNS monitor service: ${e.message}")
+        }
 
         Log.i(TAG, "═══ All policies enforced successfully ═══")
     }
@@ -65,6 +77,27 @@ object PolicyManager {
             Log.i(TAG, "User restrictions applied")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to apply user restrictions: ${e.message}")
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  Layer 3: Disable developer options
+    // ────────────────────────────────────────────────────────────
+    //  Problem: ADB setup requires developer options ON.
+    //  After setup, DISALLOW_DEBUGGING_FEATURES blocks the user
+    //  from toggling it OFF manually. But some apps (banking,
+    //  streaming, etc.) refuse to run when dev options is enabled.
+    //
+    //  Solution: As device owner, programmatically set
+    //  Settings.Global.DEVELOPMENT_SETTINGS_ENABLED = 0
+    //  This turns off developer options without needing user action.
+    // ────────────────────────────────────────────────────────────
+    private fun disableDeveloperOptions(dpm: DevicePolicyManager, admin: ComponentName) {
+        try {
+            dpm.setGlobalSetting(admin, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, "0")
+            Log.i(TAG, "Developer options disabled")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to disable developer options: ${e.message}")
         }
     }
 

@@ -85,7 +85,8 @@ class MainActivity : AppCompatActivity() {
             Settings.Global.getString(contentResolver, "private_dns_specifier") ?: "none"
         } catch (_: Exception) { "unknown" }
 
-        val dnsLocked = dnsMode == "hostname" && dnsHost.contains("cloudflare")
+        val expectedHost = DnsEnforcer.getActiveDnsHost(this)
+        val dnsLocked = dnsMode == "hostname" && dnsHost == expectedHost
         findViewById<TextView>(R.id.tvDnsStatus)?.text =
             if (dnsLocked) "✓ DNS: LOCKED → $dnsHost"
             else "✗ DNS: $dnsMode ($dnsHost)"
@@ -93,8 +94,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvBlockedDomains)?.text =
             "✓ Block list: ${DomainBlockList.count()} domains"
 
+        // Developer options status
+        val devEnabled = try {
+            Settings.Global.getInt(contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0)
+        } catch (_: Exception) { 0 }
+
         findViewById<TextView>(R.id.tvWatchdog)?.text =
-            "✓ Watchdog: running (15 min cycle)"
+            "✓ Watchdog: active | DNS Monitor: active" +
+            if (devEnabled != 0) "\n✗ Developer Options: ON (will be fixed)" else "\n✓ Developer Options: OFF"
     }
 
     // ── CARD 2: Analytics ──
@@ -123,6 +130,8 @@ class MainActivity : AppCompatActivity() {
         sb.appendLine("Owner:      $isOwner")
         sb.appendLine("DNS mode:   ${getSetting("private_dns_mode")}")
         sb.appendLine("DNS host:   ${getSetting("private_dns_specifier")}")
+        sb.appendLine("Active DNS: ${DnsEnforcer.getActiveDnsHost(this)}")
+        sb.appendLine("DNS pool:   ${DnsEnforcer.DNS_SERVERS.size} servers")
         sb.appendLine("───────────────────────────")
         sb.appendLine("Domains:    ${DomainBlockList.count()}")
         sb.appendLine("Events:     ${EventLogger.getTotalEvents(this)}")
