@@ -1,7 +1,6 @@
 package com.ultraguard.violation
 
 import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Context
 import android.util.Log
 import com.ultraguard.admin.AdminReceiver
@@ -13,11 +12,12 @@ import com.ultraguard.analytics.EventLogger
  * ═══════════════════════════════════════════════════════════════
  *
  *  Escalation ladder:
- *    1. Blocked request detected → log event
- *    2. Multiple attempts → show warning notification
- *    3. Continued attempts → temporarily block offending app
- *    4. Severe/persistent → device lock
+ *    Level 0: Normal — no violations
+ *    Level 1: Warning — 3+ attempts → push notification
+ *    Level 2: App Block — 10+ attempts → hide offending app
+ *    Level 3: Device Lock — 20+ attempts → lock screen
  *
+ *  All violations trigger an immediate push notification.
  *  No permanent restrictions. No kiosk mode. No screen lock abuse.
  */
 object ViolationEnforcer {
@@ -38,6 +38,7 @@ object ViolationEnforcer {
 
     /**
      * Called whenever a blocked domain access is detected.
+     * Pushes an immediate notification AND escalates if needed.
      */
     fun onViolation(context: Context, domain: String, sourceApp: String?) {
         val now = System.currentTimeMillis()
@@ -55,21 +56,29 @@ object ViolationEnforcer {
         // Log the event
         EventLogger.log(context, domain, sourceApp ?: "unknown")
 
-        // Escalation ladder
+        // ── ALWAYS push a blocked-access notification ──
+        NotificationHelper.notifyBlockedAccess(context, domain, sourceApp)
+
+        // ── Escalation ladder ──
         when {
             violationCount >= LOCK_THRESHOLD -> {
                 Log.w(TAG, "Lock threshold reached — locking device")
+                NotificationHelper.notifyCritical(context,
+                    "Device locked after $violationCount blocked access attempts")
                 lockDevice(context)
             }
             violationCount >= APP_BLOCK_THRESHOLD -> {
                 Log.w(TAG, "App block threshold reached")
+                NotificationHelper.notifyEscalationWarning(context,
+                    violationCount, "App Blocked")
                 if (sourceApp != null) {
                     com.ultraguard.appcontrol.AppVisibilityManager.hideApp(context, sourceApp)
                 }
             }
             violationCount >= WARN_THRESHOLD -> {
-                Log.i(TAG, "Warning threshold reached — sending notification")
-                sendWarningNotification(context, violationCount)
+                Log.i(TAG, "Warning threshold reached")
+                NotificationHelper.notifyEscalationWarning(context,
+                    violationCount, "Warning Issued")
             }
         }
     }
@@ -87,23 +96,14 @@ object ViolationEnforcer {
     }
 
     /**
-     * Send a warning notification to the user.
+     * Get the current escalation level (0-3) for UI display.
      */
-    private fun sendWarningNotification(context: Context, count: Int) {
-        try {
-            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE)
-                as android.app.NotificationManager
-
-            val notification = android.app.Notification.Builder(context, "omega_guard_channel")
-                .setContentTitle("Omega Lite Warning")
-                .setContentText("$count blocked access attempts detected. Stay strong.")
-                .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setAutoCancel(true)
-                .build()
-
-            nm.notify(1000, notification)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to send warning: ${e.message}")
+    fun getEscalationLevel(): Int {
+        return when {
+            violationCount >= LOCK_THRESHOLD -> 3
+            violationCount >= APP_BLOCK_THRESHOLD -> 2
+            violationCount >= WARN_THRESHOLD -> 1
+            else -> 0
         }
     }
 
@@ -111,6 +111,17 @@ object ViolationEnforcer {
      * Get current violation count (for analytics display).
      */
     fun getViolationCount(): Int = violationCount
+
+    /**
+     * Get time remaining until violation counter resets (in minutes).
+     * Returns -1 if no active violations.
+     */
+    fun getResetMinutesRemaining(): Int {
+        if (lastViolationTime == 0L || violationCount == 0) return -1
+        val elapsed = System.currentTimeMillis() - lastViolationTime
+        val remaining = RESET_WINDOW_MS - elapsed
+        return if (remaining > 0) (remaining / (60 * 1000)).toInt() else 0
+    }
 
     /**
      * Manually reset violations (e.g., after a cooldown period).
