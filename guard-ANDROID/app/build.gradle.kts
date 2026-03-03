@@ -11,8 +11,8 @@ android {
         applicationId = "com.ultraguard"
         minSdk = 29   // Android 10+ (Pixel 6 ships with 12)
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0-omega"
+        versionCode = 2
+        versionName = "2.0.0-omega"
     }
 
     buildTypes {

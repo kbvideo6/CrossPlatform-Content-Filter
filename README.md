@@ -20,12 +20,13 @@ Most content blockers fail because they're **too easy to bypass** — a VPN togg
 
 | Problem | How We Solve It |
 |---------|-----------------|
-| User changes DNS | DNS locked at OS level (Device Owner / hosts file) |
+| User changes DNS | DNS locked at OS level (Device Owner / hosts file) + instant re-enforcement |
 | User uninstalls blocker | Device Owner prevents uninstall; Windows Service respawns |
 | User kills process | Watchdog restarts within 2 seconds |
 | User uses incognito | Window title monitoring catches it (Windows) |
 | User installs bypass app | Known bypass apps auto-hidden (Android) |
 | User factory resets | Factory reset disabled via Device Owner policy |
+| User enables dev options | Auto-disabled on detection (Android) |
 
 **Zero cloud. Zero telemetry. Zero screen reading. 100% local.**
 
@@ -43,16 +44,20 @@ No kiosk mode. No surveillance. No internet required. All data stays on-device.
 ## Features
 
 ### Content Filtering & DNS Security
-- **DNS-level content filtering** — blocks 100+ adult domains at the network layer using Cloudflare Family DNS
+- **DNS-level content filtering** — blocks 100+ adult domains at the network layer using family-friendly DNS
+- **Multi-DNS failover** — 4 family-friendly servers (Cloudflare, CleanBrowsing, AdGuard, Quad9) with health-check
 - **Cross-platform content filter** — single project covers Android (Kotlin) and Windows (Python)
-- **Cloudflare Family DNS enforcement** — `family.cloudflare-dns.com` blocks adult content at the resolver
-- **Custom domain block lists** — extensible keyword and domain database
+- **Instant DNS tamper detection** — ContentObserver-based service catches DNS changes in real-time
+- **Custom domain block lists** — user-configurable with 21-day mandatory lock period
 
 ### Android Device Owner Protection
 - **Device Owner enforcement** — locked Private DNS, anti-uninstall, anti-factory-reset
 - **VPN-compatible** — no local VPN used, works alongside NordVPN, Mullvad, Proton VPN, etc.
+- **Developer Options auto-disable** — automatically turns off dev options after ADB provisioning
 - **App visibility control** — automatically hides known bypass apps (Tor, Opera VPN)
-- **Violation escalation** — warn → hide offending app → lock device (non-aggressive ladder)
+- **Violation escalation** — warn → hide offending app → lock device + push notification
+- **Push notifications** — alerts for blocked access, escalation events, and critical actions
+- **Dark theme UI** — 6-card dashboard with network traffic, analytics, and custom domain management
 
 ### Windows System-Level Protection
 - **Windows Service architecture** — survives task manager kills, reboots, and safe mode
@@ -70,9 +75,9 @@ No kiosk mode. No surveillance. No internet required. All data stays on-device.
 
 ## Screenshots
 
-| Android Dashboard | Windows Service | Architecture |
+| Android Dashboard (v2.0) | Windows Service | Architecture |
 |:-:|:-:|:-:|
-| ![Android Dashboard](assets/android-dashboard.png) | ![Windows Service](assets/windows-service.png) | ![Architecture](assets/architecture.png) |
+| ![Android Dashboard](assets/android-dashboard-v2.png) | ![Windows Service](assets/windows-service.png) | ![Architecture](assets/architecture.png) |
 
 ---
 
@@ -80,7 +85,7 @@ No kiosk mode. No surveillance. No internet required. All data stays on-device.
 
 | Platform | Directory | Technology | Blocking Method |
 |----------|-----------|------------|-----------------|
-| **Android 10+** | [`guard-ANDROID/`](guard-ANDROID/) | Kotlin, Gradle | Device Owner + Private DNS Lock |
+| **Android 10+** | [`guard-ANDROID/`](guard-ANDROID/) | Kotlin, Gradle | Device Owner + Multi-DNS Lock + Failover |
 | **Windows 10/11** | [`guard-WINDOWS/`](guard-WINDOWS/) | Python 3.10+ | Hosts File + Win32GUI + Windows Service |
 
 ---
@@ -89,22 +94,28 @@ No kiosk mode. No surveillance. No internet required. All data stays on-device.
 
 ### Android Content Filter
 
-The Android content filter uses the **Device Owner** API (provisioned via ADB) to enforce system-wide Private DNS filtering through Cloudflare Family. No local VPN is required — the DNS lock works at the OS level, even when a third-party VPN is active.
+The Android content filter uses the **Device Owner** API (provisioned via ADB) to enforce system-wide Private DNS filtering through family-friendly DNS servers with automatic failover. No local VPN is required — the DNS lock works at the OS level, even when a third-party VPN is active.
 
 ```
 Device Owner (core authority)
         ↓
-System Private DNS Lock (Cloudflare Family)
+Multi-DNS Lock (4-server failover)
+        ↓
+DNS Monitor Service (instant ContentObserver)
+        ↓
+Developer Options Auto-Disable
         ↓
 User Restrictions (anti-tamper)
         ↓
 App Visibility Control
         ↓
-Violation Enforcement (warn → hide → lock)
+Violation Enforcement (warn → hide → lock → notify)
+        ↓
+Custom Domain Blocking (21-day lock)
         ↓
 Auto-Heal Watchdog (15 min cycle)
         ↓
-Local Analytics & Dashboard
+Local Analytics + Network Traffic Dashboard
 ```
 
 ### Windows Content Filter
@@ -147,9 +158,10 @@ adb shell dpm set-device-owner com.ultraguard/.admin.AdminReceiver
 ```
 
 After provisioning, the dashboard should show:
-- **Device Owner:** ACTIVE
-- **DNS:** LOCKED → family.cloudflare-dns.com
-- **Watchdog:** running (15 min cycle)
+- **Protection Active** (green shield glow)
+- **DNS Lock:** family.cloudflare-dns.com ✓
+- **Bypass Prevention:** Active ✓
+- **Watchdog:** Active (15 min)
 
 ### Windows Setup
 
@@ -197,9 +209,11 @@ See each platform's README for detailed configuration:
 | 2 | Private DNS Lock | Forces `family.cloudflare-dns.com` system-wide |
 | 3 | User Restrictions | Blocks factory reset, safe boot, debugging, add user |
 | 4 | App Visibility | Hides known bypass apps (Tor, Opera VPN) |
-| 5 | Violation Escalation | warn → hide app → lock device |
-| 6 | Watchdog | Re-verifies DNS + restrictions every 15 min |
-| 7 | Event Logger | Local-only analytics (streak, daily count, history) |
+| 5 | Violation Escalation | warn → hide app → lock device + notification |
+| 6 | DNS Monitor Service | ContentObserver-based instant tamper detection |
+| 7 | Watchdog | Re-verifies DNS + restrictions every 15 min |
+| 8 | Custom Domain Blocks | User-added domains with 21-day lock |
+| 9 | Event Logger | Local-only analytics (streak, daily count, history) |
 
 ### Windows Protection Layers
 
@@ -238,24 +252,29 @@ CrossPlatform-Content-Filter/
 │
 ├── guard-ANDROID/                    # Android content filter
 │   ├── app/src/main/java/com/ultraguard/
-│   │   ├── MainActivity.kt          # Dashboard UI (4-card layout)
+│   │   ├── MainActivity.kt          # Dashboard UI (6-card dark theme)
+│   │   ├── BlockHistoryActivity.kt  # Full block history view
 │   │   ├── OmegaApp.kt              # Application entry point
 │   │   ├── admin/
 │   │   │   ├── AdminReceiver.kt     # Device Owner receiver
 │   │   │   └── PolicyManager.kt     # Central policy orchestrator
 │   │   ├── dns/
-│   │   │   ├── DnsEnforcer.kt       # Private DNS lock enforcement
-│   │   │   └── DomainBlockList.kt   # 100+ blocked domains
+│   │   │   ├── DnsEnforcer.kt       # Multi-DNS lock with failover
+│   │   │   ├── DnsMonitorService.kt # Instant DNS tamper detection
+│   │   │   ├── DomainBlockList.kt   # 100+ blocked domains
+│   │   │   └── DomainBlockManager.kt # Custom 21-day domain blocking
 │   │   ├── appcontrol/
 │   │   │   └── AppVisibilityManager.kt
 │   │   ├── violation/
-│   │   │   └── ViolationEnforcer.kt # Escalation ladder
+│   │   │   ├── ViolationEnforcer.kt # Escalation ladder + notifications
+│   │   │   └── NotificationHelper.kt # Push notification system
 │   │   ├── watchdog/
 │   │   │   ├── BootReceiver.kt      # Re-apply on reboot
 │   │   │   ├── WatchdogScheduler.kt
-│   │   │   └── WatchdogWorker.kt    # 15-min health check
+│   │   │   └── WatchdogWorker.kt    # 15-min health check + DNS fallback
 │   │   └── analytics/
-│   │       └── EventLogger.kt       # Local event logging
+│   │       ├── EventLogger.kt       # Local event logging
+│   │       └── NetworkTrafficSummary.kt # Network traffic stats
 │   ├── build.gradle.kts
 │   └── README.md
 │
@@ -293,10 +312,15 @@ CrossPlatform-Content-Filter/
 
 ## Roadmap
 
+- [x] Custom domain block lists (user-configurable, 21-day lock)
+- [x] Multi-DNS failover (4-server health-check)
+- [x] Instant DNS tamper detection (ContentObserver)
+- [x] Push notifications for blocked access
+- [x] Dark theme UI redesign
+- [x] Network traffic dashboard
 - [ ] iOS support (Supervised MDM profile)
 - [ ] Web dashboard for multi-device analytics
 - [ ] Scheduled blocking (study hours / bedtime)
-- [ ] Custom domain block lists (user-configurable)
 - [ ] Browser extension companion
 - [ ] macOS support (Network Extension framework)
 

@@ -394,4 +394,3 @@ class MainActivity : AppCompatActivity() {
         } catch (_: Exception) { "error" }
     }
 }
-}

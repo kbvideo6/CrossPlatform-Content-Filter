@@ -1,10 +1,34 @@
 # Omega Lite Android
 
-Privacy-respecting DNS-level content blocker for Android (Pixel 6 / Android 12+).
+> **v2.0.0** — Major UI overhaul, multi-DNS failover, push notifications, 21-day domain blocking.
+
+Privacy-respecting DNS-level content blocker for Android (Pixel 6 / Android 10+).
 
 **No screen reading. No kiosk mode. No VPN. No system restriction abuse.**
 
-Uses Android's **Device Owner** API to lock Private DNS to [Cloudflare Family](https://developers.cloudflare.com/1.1.1.1/setup/#family) (`family.cloudflare-dns.com`), which blocks adult content at the resolver level. Because there is no local VPN, you can freely run any real VPN (NordVPN, Mullvad, etc.) alongside this app.
+Uses Android's **Device Owner** API to lock Private DNS to family-friendly DNS servers (Cloudflare Family, CleanBrowsing, AdGuard Family, Quad9), which block adult content at the resolver level. Multi-server failover ensures protection even if a DNS server goes down. Because there is no local VPN, you can freely run any real VPN (NordVPN, Mullvad, etc.) alongside this app.
+
+---
+
+## What's New in v2.0.0
+
+- **Dark UI Redesign** — 6-card dashboard with midnight blue/charcoal theme, emerald green/amber/soft red accents
+- **Multi-DNS Failover** — 4 family-friendly DNS servers with automatic health-check and instant fallback
+- **Instant DNS Tamper Detection** — ContentObserver-based foreground service detects DNS changes in real-time (not 15-min polling)
+- **Developer Options Auto-Disable** — automatically turns off developer options after ADB provisioning
+- **Custom Domain Blocking** — add domains to block with a 21-day mandatory lock period before removal
+- **Push Notifications** — notifies on blocked access, escalation warnings, and critical events
+- **Network Traffic Dashboard** — real-time RX/TX traffic summary via TrafficStats API
+- **Block History Activity** — full event history view with timestamps and sources
+- **Custom App Icon** — adaptive launcher icon from brand SVG
+
+---
+
+## Screenshot
+
+<p align="center">
+  <img src="../assets/android-dashboard-v2.png" alt="Omega Lite v2.0 Dashboard" width="360">
+</p>
 
 ---
 
@@ -43,23 +67,28 @@ Local Analytics
 ```
 app/src/main/java/com/ultraguard/
 ├── OmegaApp.kt                     # Application entry point
-├── MainActivity.kt                  # Dashboard UI (4-card layout)
+├── MainActivity.kt                  # Dashboard UI (6-card dark theme)
+├── BlockHistoryActivity.kt          # Full block history view
 ├── admin/
 │   ├── AdminReceiver.kt            # Device Owner receiver
 │   └── PolicyManager.kt            # Central policy orchestrator
 ├── dns/
-│   ├── DnsEnforcer.kt              # Private DNS lock enforcement
-│   └── DomainBlockList.kt          # Reference block list (100+ domains)
+│   ├── DnsEnforcer.kt              # Multi-DNS lock with 4-server failover
+│   ├── DnsMonitorService.kt        # Instant DNS tamper detection service
+│   ├── DomainBlockList.kt          # Built-in block list (100+ domains)
+│   └── DomainBlockManager.kt       # Custom domain blocking (21-day lock)
 ├── appcontrol/
 │   └── AppVisibilityManager.kt     # Hide/show apps via DPM
 ├── violation/
-│   └── ViolationEnforcer.kt        # Escalation ladder
+│   ├── ViolationEnforcer.kt        # Escalation ladder + notifications
+│   └── NotificationHelper.kt       # Push notification system (3 channels)
 ├── watchdog/
 │   ├── BootReceiver.kt             # Re-apply policies on reboot
 │   ├── WatchdogScheduler.kt        # WorkManager scheduler
-│   └── WatchdogWorker.kt           # Periodic health check
+│   └── WatchdogWorker.kt           # Periodic health check + DNS fallback
 └── analytics/
-    └── EventLogger.kt              # Local event logging
+    ├── EventLogger.kt              # Local event logging
+    └── NetworkTrafficSummary.kt    # Network traffic stats
 ```
 
 ---
@@ -93,6 +122,8 @@ Open the project in Android Studio. Gradle sync should complete automatically.
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
+> **Pre-built APK:** A debug APK is available in [GitHub Releases](https://github.com/kbvideo6/CrossPlatform-Content-Filter/releases/latest) for sideloading.
+
 ### 3. Provision as Device Owner
 
 > **Important:** The device must have **no Google accounts** signed in.
@@ -112,9 +143,12 @@ Active admin component set to ComponentInfo{com.ultraguard/com.ultraguard.admin.
 
 Open Omega Lite. The dashboard should show:
 
-- **Device Owner:** ACTIVE
-- **DNS:** LOCKED → family.cloudflare-dns.com
-- **Watchdog:** running (15 min cycle)
+- **Protection Active** (green shield glow)
+- **Device Owner Authority:** Secured
+- **DNS Lock:** family.cloudflare-dns.com ✓
+- **Bypass Prevention:** Active ✓
+- **Watchdog Worker:** Active (15 min)
+- **DNS Monitor:** Active (instant)
 
 ---
 
